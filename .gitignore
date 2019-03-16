@@ -1,0 +1,16 @@
+packer_cache/
+output-*/
+priv/
+.vagrant/
+.kitchen/
+*.box
+*.iso
+*.env
+
+.terraform
+*.tfstate*
+
+Gemfile
+Gemfile.lock
+.ruby-version
+
