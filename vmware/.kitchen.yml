@@ -1,0 +1,29 @@
+---
+driver:
+  name: vcenter
+  vcenter_username: <%= ENV['VCENTER_USERNAME'] %>
+  vcenter_password: <%= ENV['VCENTER_PASSWORD'] %>
+  vcenter_host:  <%= ENV['VCENTER_HOST'] %>
+  vcenter_disable_ssl_verify: true
+  customize:
+    annotation: "Kitchen VM by <%= ENV['USER'] %> on <%= Time.now.to_s %>"
+
+provisioner:
+  name: shell
+
+platforms:
+  - name: bionic64
+    driver:
+      #targethost: mainframe.int.kikitux.net
+      template: templates/bionic64-template
+      interface: "VM Network"
+      datacenter: "datacenter"
+    transport:
+      username: ubuntu
+      password: ubuntu
+
+verifier:
+  name: inspec
+
+suites:
+  - name: default

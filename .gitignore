@@ -6,6 +6,7 @@ priv/
 *.box
 *.iso
 *.env
+*.ova
 
 .terraform
 *.tfstate*
