@@ -1,0 +1,49 @@
+{
+  "variables": {
+    "build_name": "bionic64-dev",
+    "build_cpu_cores": "2",
+    "build_memory": "2048",
+    "disk_size": "82000",
+    "headless": "true",
+    "source_path": "output-bionic64-vmware/bionic64.vmx",
+    "ssh_username": "ubuntu",
+    "ssh_password": "ubuntu"
+  },
+  "builders": [
+    {
+      "name": "{{ user `build_name` }}-vmware",
+      "vm_name": "{{ user `build_name` }}",
+      "output_directory": "output-{{ user `build_name` }}",
+      "headless": "{{user `headless`}}",
+      "source_path": "{{user `source_path`}}",
+      "shutdown_command": "echo 'ubuntu' | sudo -S poweroff",
+      "ssh_password": "{{user `ssh_username`}}",
+      "ssh_username": "{{user `ssh_password`}}",
+      "ssh_wait_timeout": "20m",
+      "tools_upload_flavor": "linux",
+      "type": "vmware-vmx"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "execute_command": "echo 'ubuntu' | {{.Vars}} sudo -H -E -S bash '{{.Path}}'",
+      "expect_disconnect": true,
+      "inline": [
+	      "export DEBIAN_FRONTEND=noninteractive",
+	      "apt-get update",
+	      "apt-get install -y --no-install-recommends build-essential",
+	      "apt-get install -y --no-install-recommends python-pip python3-pip python-pylxd python3-pylxd ruby ruby-dev",
+              "apt-get install -y --no-install-recommends git jq curl wget vim language-pack-en sysstat htop tmux unzip ctop"
+      ]
+    },
+    {
+      "type": "shell",
+      "only": [
+        "{{ user `build_name` }}-vmware"
+      ],
+      "execute_command": "echo 'ubuntu' | {{.Vars}} sudo -H -E -S bash '{{.Path}}'",
+      "script": "../scripts/vmware_cleanup.sh"
+    }
+  ]
+}

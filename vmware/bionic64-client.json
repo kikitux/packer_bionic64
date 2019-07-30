@@ -1,0 +1,51 @@
+{
+  "variables": {
+    "build_name": "bionic64-client",
+    "headless": "true",
+    "source_path": "output-bionic64-vmware/bionic64.vmx",
+    "ssh_username": "ubuntu",
+    "ssh_password": "ubuntu"
+  },
+  "builders": [
+    {
+      "name": "{{ user `build_name` }}-vmware",
+      "vm_name": "{{ user `build_name` }}",
+      "output_directory": "output-{{ user `build_name` }}",
+      "headless": "{{user `headless`}}",
+      "source_path": "{{user `source_path`}}",
+      "shutdown_command": "echo 'ubuntu' | sudo -S poweroff",
+      "ssh_password": "{{user `ssh_username`}}",
+      "ssh_username": "{{user `ssh_password`}}",
+      "ssh_wait_timeout": "20m",
+      "tools_upload_flavor": "linux",
+      "type": "vmware-vmx"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "execute_command": "echo 'ubuntu' | {{.Vars}} sudo -H -E -S bash '{{.Path}}'",
+      "expect_disconnect": true,
+      "inline": [
+	      "export DEBIAN_FRONTEND=noninteractive",
+	      "apt-get update",
+	      "apt-get install -y --no-install-recommends default-jre",
+	      "apt-get install -y --no-install-recommends docker.io",
+	      "apt-get install -y --no-install-recommends rkt",
+	      "apt-get install -y --no-install-recommends qemu-system-x86",
+	      "curl -sL -o /tmp/download_product.sh  https://raw.githubusercontent.com/kikitux/curl-bash/master/provision/download_product.sh",
+	      "PRODUCT=consul bash /tmp/download_product.sh",
+	      "PRODUCT=nomad bash /tmp/download_product.sh",
+	      "PRODUCT=node_exporter bash /tmp/download_product.sh"
+      ]
+    },
+    {
+      "type": "shell",
+      "only": [
+        "{{ user `build_name` }}-vmware"
+      ],
+      "execute_command": "echo 'ubuntu' | {{.Vars}} sudo -H -E -S bash '{{.Path}}'",
+      "script": "../scripts/vmware_cleanup.sh"
+    }
+  ]
+}

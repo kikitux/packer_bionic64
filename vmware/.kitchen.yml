@@ -5,6 +5,8 @@ driver:
   vcenter_password: <%= ENV['VCENTER_PASSWORD'] %>
   vcenter_host:  <%= ENV['VCENTER_HOST'] %>
   vcenter_disable_ssl_verify: true
+  folder: kitchen-test
+  clone_type: linked
   customize:
     annotation: "Kitchen VM by <%= ENV['USER'] %> on <%= Time.now.to_s %>"
 
@@ -12,18 +14,44 @@ provisioner:
   name: shell
 
 platforms:
-  - name: bionic64
+  - name: bionic64-base
     driver:
-      #targethost: mainframe.int.kikitux.net
-      template: templates/bionic64-template
+      template: templates/bionic64-base
+      interface: "VM Network"
+      datacenter: "datacenter"
+    transport:
+      username: ubuntu
+      password: ubuntu      
+
+  - name: bionic64-client
+    driver:
+      template: templates/bionic64-client
       interface: "VM Network"
       datacenter: "datacenter"
     transport:
       username: ubuntu
       password: ubuntu
 
+  - name: bionic64-dev
+    driver:
+      template: templates/bionic64-dev
+      interface: "VM Network"
+      datacenter: "datacenter"
+    transport:
+      username: ubuntu
+      password: ubuntu      
+
 verifier:
   name: inspec
 
 suites:
-  - name: default
+  - name: base-test
+
+  - name: client-test
+    includes:
+            - bionic64-client
+
+  - name: dev-test
+    includes:
+            - bionic64-dev
+
