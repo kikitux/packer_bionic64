@@ -9,8 +9,14 @@ path-exclude /usr/share/lintian/*
 path-exclude /usr/share/linda/*
 EOF
 
-export DEBIAN_FRONTEND=noninteractive
+cat >/etc/apt/apt.conf.d/99_norecommends <<EOF
+APT::Install-Recommends "false";
+APT::AutoRemove::RecommendsImportant "false";
+APT::AutoRemove::SuggestsImportant "false";
+EOF
+
 export APTARGS="-qq -o=Dpkg::Use-Pty=0"
+export DEBIAN_FRONTEND=noninteractive
 
 # use mirrors
 sudo sed -i -e 's/http:\/\/us.archive/mirror:\/\/mirrors/' -e 's/\/ubuntu\//\/mirrors.txt/' /etc/apt/sources.list
@@ -25,10 +31,20 @@ apt-get dist-upgrade -y ${APTARGS}
 apt-get install -y linux-generic linux-image-generic ${APTARGS}
 
 # basic tools
-apt-get install -y git curl wget jq tar unzip ${APTARGS}
+apt-get install -y ${APTARGS} \
+	git vim curl wget jq tar unzip software-properties-common net-tools \
+	language-pack-en ctop htop sysstat unattended-upgrades
+
+# unattended-upgrades
+unattended-upgrades -v
 
 # for docker devicemapper
 apt-get install -y thin-provisioning-tools ${APTARGS}
+
+# hashicorp repo
+curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
+apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+apt-get update
 
 # add user_subvol_rm_allowed to fstab 
 # if /var/lib is btrfs

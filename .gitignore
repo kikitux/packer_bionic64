@@ -1,6 +1,7 @@
 packer_cache/
 output-*/
 priv/
+vendor/
 .vagrant/
 .kitchen/
 *.box

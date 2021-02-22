@@ -10,10 +10,6 @@ platforms:
     driver:
       box: bionic64
       provider: virtualbox
-  - name: vmware/bionic64
-    driver:
-      box: bionic64
-      provider: vmware_desktop
 
 verifier:
   name: inspec
