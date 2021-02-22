@@ -1,5 +1,23 @@
 # packer_bionic64
 
+## pre-requirements
+
+- packer
+- vagrant
+
+## how to use this repo
+- clone this repo
+- build box
+- test box
+- publish box
+- consume box 
+
+## clone
+```
+git clone https://github.com/kikitux/packer_bionic64
+cd packer_bionic64
+```
+
 ## build
 
 ```
@@ -66,3 +84,11 @@ vagrant cloud publish --box-version `date +%y.%m.%d` \
   `date +%y.%m.%d` virtualbox bionic64-vbox.box
 ```
 
+## consul box
+
+```
+mkdir test
+cd test
+vagrant init -m <user>/<box>
+vagrant up
+```
