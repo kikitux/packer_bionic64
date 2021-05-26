@@ -41,11 +41,6 @@ unattended-upgrades -v
 # for docker devicemapper
 apt-get install -y thin-provisioning-tools ${APTARGS}
 
-# hashicorp repo
-curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
-apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-apt-get update
-
 # add user_subvol_rm_allowed to fstab 
 # if /var/lib is btrfs
 sed -i -e 's/\/var\/lib.*.btrfs.*.defaults.*.0/\/var\/lib\tbtrfs\tdefaults,user_subvol_rm_allowed\t0/g' /etc/fstab
