@@ -84,7 +84,7 @@ vagrant cloud publish --box-version `date +%y.%m.%d` \
   `date +%y.%m.%d` virtualbox bionic64-vbox.box
 ```
 
-## consul box
+## consume box
 
 ```
 mkdir test
